@@ -6,4 +6,4 @@ RUN  apk add -U tzdata && \
 COPY ./target/eureka-server.jar /
 COPY pinpoint /pinpoint
 EXPOSE 8761
-CMD java -jar -javaagent:/pinpoint/pinpoint-bootstrap-1.8.3.jar -Dpinpoint.agentId=${HOSTNAME} -Dpinpoint.applicationName=ms-eureka $JAVA_OPTS -Deureka.instance.hostname=${MY_POD_NAME}.eureka.wb /eureka-server.jar
+CMD java -jar -javaagent:/pinpoint/pinpoint-bootstrap-1.8.3.jar -Dpinpoint.agentId=${HOSTNAME} -Dpinpoint.applicationName=eureka-server $JAVA_OPTS -Deureka.instance.hostname=${MY_POD_NAME}.eureka.wb-parking /eureka-server.jar
