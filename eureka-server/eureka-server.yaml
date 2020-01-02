@@ -51,7 +51,7 @@ spec:
         - name: registry-pull-secret
       containers:
         - name: eureka
-          image: 192.168.233.104/wb-parking/eureka-server:master
+          image: $IMAGE_NAME
           ports:
             - protocol: TCP
               containerPort: 8761
