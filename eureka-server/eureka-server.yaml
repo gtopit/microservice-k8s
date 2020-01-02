@@ -1,0 +1,81 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: eureka
+  namespace: wb-parking
+spec:
+  rules:
+    - host: eureka.citycloud.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: eureka
+              servicePort: 8761
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eureka
+  namespace: wb-parking
+spec:
+  clusterIP: None
+  ports:
+    - port: 8761
+      name: eureka
+  selector:
+    project: wb-parking
+    app: eureka
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: eureka
+  namespace: wb-parking
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      project: wb-parking
+      app: eureka
+  serviceName: "eureka-server"
+  template:
+    metadata:
+      labels:
+        project: wb-parking
+        app: eureka
+    spec:
+      imagePullSecrets:
+        - name: registry-pull-secret
+      containers:
+        - name: eureka
+          image: 192.168.233.104/wb-parking/eureka-server:master
+          ports:
+            - protocol: TCP
+              containerPort: 8761
+          env:
+            - name: JAVA_OPTS
+              value: "-Xmx1g"
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          resources:
+            requests:
+              cpu: 0.5
+              memory: 256Mi
+            limits:
+              cpu: 1
+              memory: 1Gi
+          readinessProbe:
+            tcpSocket:
+              port: 8761
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8761
+            initialDelaySeconds: 60
+            periodSeconds: 10
